@@ -3,11 +3,10 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import logo from './logo.svg';
 import './App.css';
 
-console.log('Go forward')
 
 const Home = () => (
   <div>
-    <h2>Home</h2>
+         <h2>Home</h2>
   </div>
 );
 

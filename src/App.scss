@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  * {
+    box-sizing: border-box;
+  }
 }
 
 .App-logo {
@@ -32,11 +35,13 @@
 }
 
 
+
+
 // Sortable table
 .table {
   display: block;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 50px auto 200px;
 
   &__content {
     display: block;
@@ -54,6 +59,58 @@
   }
 
 
+}
+
+// filters-list 
+
+.filters-list {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  border: 1px solid black;
+
+  &__item {
+    display: block;
+    width: 33.3%;
+    border-right: 1px solid black;
+  }
+
+  &__item:last-child {
+    border-width: 0;
+  }
+
+}
+
+// table-rows-list
+
+.table-rows-list {
+  &__item {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    border: 1px solid black;
+    border-bottom: 0px solid black;
+  }
+  &__item:last-child {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    border-width: 1px;
+  }
+  
+  &__item-cell {
+    display: block;
+    width: 20%;
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid black;
+  }
+  &__item-cell:last-child {
+    border-width: 0;
+  }
 }
 
 

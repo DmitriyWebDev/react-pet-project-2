@@ -2,6 +2,8 @@ import React from 'react'
 import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
+import { connect } from "react-redux";
+import { loadUsers } from "../../ducks/sortableTable/index";
 
 class SortableTable extends React.Component {
     constructor(props) {
@@ -11,46 +13,59 @@ class SortableTable extends React.Component {
     }
 
     componentDidMount() {
-        const urlGetUsers = 'https://gist.githubusercontent.com/bunopus/f48fbb06578003fb521c7c1a54fd906a/raw/e5767c1e7f172c6375f064a9441f2edd57a79f15/test_users.json'
-        // console.log(urlGetUsers)
+        console.log("componentDidMount")
+        console.log(this.props)
+        const {usersLoading, usersLoaded, loadUsers} = this.props
+        if(!usersLoading && !usersLoaded) {
+            loadUsers()
+        }
+    }
 
-        // fetch(urlGetUsers)
-        //     .then(function (response) {
-        //         console.log(response)
-        //         return response.json()
-        //     })
-        //     .then(function (usersList) {
-        //         console.log(usersList)
-        //     })
-        //     .catch(alert)
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("componentDidUpdate, ===")
     }
 
     handleFilterChange(event) {
         console.log("handleFilterChange()", '---')
-     }
+    }
 
     handleSortChange(event) {
         console.log("handleSortChange()", '---')
     }
 
     render() {
+        const {users} = this.props
         return (
             <div className="table">
                 <div className="table__content">
 
                     <div className="table__filters">
-                        <FIlters handleFilterChange={this.handleFilterChange}/>
+                        <FIlters handleFilterChange={this.handleFilterChange} />
                     </div>
 
                     <div className="table__rows">
                         <RowsTitles />
-                        <RowsList />        
+                        <RowsList users={users} />
                     </div>
-                    
+
                 </div>
             </div>
         )
     }
 }
 
-export default SortableTable
+const mapStateToProps = (state /*, ownProps*/) => {
+    const {usersLoading, usersLoaded, users} = state.sortableTable
+    return {
+        usersLoading,
+        usersLoaded,
+        users
+    };
+};
+
+
+export default connect(
+    mapStateToProps,
+    {loadUsers},
+)(SortableTable);
+

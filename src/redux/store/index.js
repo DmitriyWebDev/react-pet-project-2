@@ -1,4 +1,12 @@
-import { createStore } from "redux";
-import rootReducer from "../reducer";
+import { createStore, applyMiddleware } from "redux"
+import rootReducer from "../reducer"
+import {requestUsers} from '../../ducks/sortableTable/index'
 
-export default createStore(rootReducer);
+const store = createStore(
+    rootReducer,
+    applyMiddleware(requestUsers)
+)
+
+window.store = store
+
+export default store

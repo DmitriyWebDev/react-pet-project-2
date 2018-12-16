@@ -1,63 +1,31 @@
 import React from 'react'
 
 const RowsList = (props) => {
+    const usersRows = props.users.map((item,i) => {
+        const {id, name, age, gender, department, _addressFull} = item
+
+        return <div key={id} className="table-rows-list__item">
+                    <div className="table-rows-list__item-cell">
+                        {name}
+                    </div>
+                    <div className="table-rows-list__item-cell">
+                        {age}
+                    </div>
+                    <div className="table-rows-list__item-cell">
+                        {gender}
+                    </div>
+                    <div className="table-rows-list__item-cell">
+                        {department}
+                    </div>
+                    <div className="table-rows-list__item-cell">
+                        {_addressFull}
+                    </div>
+                </div>
+    })
+
     return (
-        <div className="table__rows-list">
-
-            <div className="table__rows-list-item">
-                <div className="table__rows-list-item-cell">
-                    Mendez 1
-                </div>
-                <div className="table__rows-list-item-cell">
-                    30
-                </div>
-                <div className="table__rows-list-item-cell">
-                    male
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Backend
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Moscow, Fayette Street 923
-            </div>
-            </div>
-
-            <div className="table__rows-list-item">
-                <div className="table__rows-list-item-cell">
-                    Mendez 2
-                </div>
-                <div className="table__rows-list-item-cell">
-                    30
-                </div>
-                <div className="table__rows-list-item-cell">
-                    male
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Backend
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Moscow, Fayette Street 923
-                </div>
-            </div>
-
-            <div className="table__rows-list-item">
-                <div className="table__rows-list-item-cell">
-                    Mendez 3
-                </div>
-                <div className="table__rows-list-item-cell">
-                    30
-                </div>
-                <div className="table__rows-list-item-cell">
-                    male
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Backend
-                </div>
-                <div className="table__rows-list-item-cell">
-                    Moscow, Fayette Street 923
-                </div>
-            </div>
-
+        <div className="table-rows-list">
+            {usersRows}
         </div>
     )
 }

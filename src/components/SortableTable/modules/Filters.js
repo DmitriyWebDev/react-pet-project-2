@@ -1,6 +1,12 @@
 import React from 'react'
 
 const Filters = (props) => {
+
+    const { genderOptions, departmentOptions, cityOptions } = props
+    const genderFilters = getFiltersOtions('gender', genderOptions)
+    const departmentFilters = getFiltersOtions('department', departmentOptions)
+    const cityFilters = getFiltersOtions('city', cityOptions)
+        
     return (
         <div className="filters-list">
 
@@ -9,100 +15,54 @@ const Filters = (props) => {
                     Gender
                 </div>
                 <div className="filters-list__item-options">
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            male
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="gender"
-                            type="checkbox"
-                            checked={true}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            female
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="gender"
-                            type="checkbox"
-                            checked={false}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
+                    {genderFilters}
                 </div>
             </div>
 
             <div className="filters-list__item">
                 <div className="filters-list__item-title">
-                    department
+                    Department
                 </div>
                 <div className="filters-list__item-options">
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            Backend
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="department"
-                            type="checkbox"
-                            checked={true}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            Frontend
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="department"
-                            type="checkbox"
-                            checked={false}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
+                    {departmentFilters}
                 </div>
             </div>
 
             <div className="filters-list__item">
                 <div className="filters-list__item-title">
-                    city
+                    City
                 </div>
                 <div className="filters-list__item-options">
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            New-York
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="gender"
-                            type="checkbox"
-                            checked={true}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
-                    <label className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            Moscow
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name="gender"
-                            type="checkbox"
-                            checked={false}
-                            onChange={props.handleFilterChange}
-                        />
-                    </label>
+                    {cityFilters}
                 </div>
             </div>
-            
+
         </div>
 
     )
+
+    // utils
+
+    function getFiltersOtions(optionsName, options) {
+        return options.map((item, i) => {
+            const { label, count, checked } = item
+    
+            return <label key={label} className="filters-list__item-option">
+                        <div className="filters-list__item-option-name">
+                            {label} ({count})
+                        </div>
+                        <input
+                            className="filters-list__item-option-input"
+                            name={optionsName}
+                            type="checkbox"
+                            checked={checked}
+                            onChange={props.handleFilterChange}
+                            value={label}
+                        />
+                    </label>
+        })
+    }  
+
 }
 
 export default Filters

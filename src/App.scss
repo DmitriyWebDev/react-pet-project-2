@@ -82,6 +82,30 @@
 
 }
 
+// table-rows-titles
+
+.table-rows-titles {
+  display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    border: 1px solid black;
+    border-bottom: 0px solid black;
+  &__item {
+    display: block;
+    width: 20%;
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid black;
+    background: gray;
+    color: white;
+  }
+  &__item:last-child {
+    border-width: 0;
+  }
+  
+}
+
 // table-rows-list
 
 .table-rows-list {

@@ -1,36 +1,49 @@
 import {
   START, SUCCESS, FAIL
 } from '../../constants-common'
-import {getDefaultUsers} from './utils'
+import {
+  getDefaultUsers,
+  getFiltersOptionsKeysFromUsersData,
+  getUsersCountByFiltersValues,
+  getFiltersOptionsForView
+} from './utils'
 
 // Actions
 const LOAD_USERS = 'app/sortable-table/LOAD_USERS'
 
 // State
-let defaultUsers = [
-  // {
-  //   id: "573f358cbd70b5b843a2d624",
-  //   name: "Mendez",
-  //   age: 30,
-  //   gender: "male",
-  //   department: "Backend",
-  //   address: {
-  //     city: "Moscow",
-  //     street: "Fayette Street 923"
-  //   },
-  //   // custom data fields
-  //   _addressFull: "Moscow, Fayette Street 923",
-  //   // custom sort fields
-  //   _sortGender: "male",
-  //   _sortDepartment: "Backend",
-  //   _sortCity: "Moscow"
-  // },
-]
-
 const defaultState = {
   usersLoading: false,
   usersLoaded: false,
-  users: []
+  defaultUsers : [
+    // {
+    //   id: "573f358cbd70b5b843a2d624",
+    //   name: "Mendez",
+    //   age: 30,
+    //   gender: "male",
+    //   department: "Backend",
+    //   address: {
+    //     city: "Moscow",
+    //     street: "Fayette Street 923"
+    //   },
+    //   // custom data fields
+    //   _addressFull: "Moscow, Fayette Street 923",
+    //   // custom sort fields
+    //   _sortGender: "male",
+    //   _sortDepartment: "Backend",
+    //   _sortCity: "Moscow"
+    // },
+  ],
+  users: [],
+  usersCountByFiltersAssocMap: {},
+  //filters
+  activeFiltersKeys: {},
+  filtersOptionsKeysGender: [],
+  filtersOptionsKeysDepartment: [],
+  filtersOptionsKeysCity: [],
+  filtersOptionsForViewGender: [],
+  filtersOptionsForViewDepartment: [],
+  filtersOptionsForViewCity: [],
 }
 
 // Reducer
@@ -47,14 +60,41 @@ export default function reducer(state = defaultState, action = {}) {
         usersLoading: true,
         usersLoaded: false      
       }
-    case LOAD_USERS + SUCCESS:    
-      defaultUsers = getDefaultUsers(payload.users)
+    case LOAD_USERS + SUCCESS:
+      const {activeFiltersKeys} = state 
+      const {users} = payload
+      const {
+        genderKeys, departmentKeys, cityKeys
+      } = getFiltersOptionsKeysFromUsersData(users)
+      const usersCountByFiltersAssocMap = getUsersCountByFiltersValues(
+        genderKeys.concat(departmentKeys, cityKeys), users
+      )  
+      const {genderOptions, departmentOptions, cityOptions} = getFiltersOptionsForView(
+        {
+          genderValues: genderKeys,
+          departmentValues: departmentKeys,
+          cityValues: cityKeys
+        },
+        usersCountByFiltersAssocMap,
+        activeFiltersKeys
+      )
+
+      //console.log('Test 1 ---')
+      //console.log(filtersOptionForView)
   
       return {
         ...state,
         usersLoading: false,
         usersLoaded: true,
-        users: getDefaultUsers(payload.users)
+        defaultUsers: getDefaultUsers(users),
+        users: getDefaultUsers(users),
+        usersCountByFiltersAssocMap,
+        filtersOptionsKeysGender: [].concat(genderKeys),
+        filtersOptionsKeysDepartment: [].concat(departmentKeys),
+        filtersOptionsKeysCity: [].concat(cityKeys),
+        filtersOptionsForViewGender: [].concat(genderOptions),
+        filtersOptionsForViewDepartment: [].concat(departmentOptions),
+        filtersOptionsForViewCity: [].concat(cityOptions)
       }
     case LOAD_USERS + FAIL:
       return state
@@ -69,16 +109,10 @@ export function loadUsers() {
 
 // side effects, only as applicable
 // e.g. thunks, epics, etc
-// export function getUsers () {
-//   console.log("getUsers Middleware", "---")
-//   //return dispatch => get('/widget').then(widget => dispatch(updateWidget(widget)))
-// }
-
 export const requestUsers = store => next => action => {
-  console.log("Middleware - requestUsers()", '---')
-  console.log(action)
   const {type, ...rest} = action
-  next(action)
+  
+  if(type !== LOAD_USERS + START) return next(action)
 
   const urlGetUsers = 'https://gist.githubusercontent.com/bunopus/f48fbb06578003fb521c7c1a54fd906a/raw/e5767c1e7f172c6375f064a9441f2edd57a79f15/test_users.json'
   

@@ -27,24 +27,42 @@ class SortableTable extends React.Component {
 
     handleFilterChange(event) {
         console.log("handleFilterChange()", '---')
+        const target = event.target;
+        const {value, name} = target
+
+        console.log(name)
+        console.log(value)
     }
 
-    handleSortChange(event) {
+    handleSortChange(sortType) {
         console.log("handleSortChange()", '---')
+        console.log(sortType)    
     }
 
     render() {
-        const {users} = this.props
+
+        const {
+            users,
+            filtersOptionsForViewGender,
+            filtersOptionsForViewDepartment,
+            filtersOptionsForViewCity
+        } = this.props
+
         return (
             <div className="table">
                 <div className="table__content">
 
                     <div className="table__filters">
-                        <FIlters handleFilterChange={this.handleFilterChange} />
+                        <FIlters
+                            handleFilterChange={this.handleFilterChange}
+                            genderOptions={filtersOptionsForViewGender}
+                            departmentOptions={filtersOptionsForViewDepartment}
+                            cityOptions={filtersOptionsForViewCity}
+                        />
                     </div>
 
                     <div className="table__rows">
-                        <RowsTitles />
+                        <RowsTitles handleSortChange={this.handleSortChange}/>
                         <RowsList users={users} />
                     </div>
 
@@ -55,11 +73,19 @@ class SortableTable extends React.Component {
 }
 
 const mapStateToProps = (state /*, ownProps*/) => {
-    const {usersLoading, usersLoaded, users} = state.sortableTable
+    const {
+        usersLoading, usersLoaded, users,
+        filtersOptionsForViewGender,
+        filtersOptionsForViewDepartment,
+        filtersOptionsForViewCity,
+    } = state.sortableTable
     return {
         usersLoading,
         usersLoaded,
-        users
+        users,
+        filtersOptionsForViewGender,
+        filtersOptionsForViewDepartment,
+        filtersOptionsForViewCity,
     };
 };
 

@@ -5,11 +5,16 @@ import {
   getDefaultUsers,
   getFiltersOptionsKeysFromUsersData,
   getUsersCountByFiltersValues,
-  getFiltersOptionsForView
+  getFiltersOptionsForView,
+  getNewActiveFiltersKeys,
+  getArrayWithoutStringIfExists,
+  getFiltersValuesTypesAssocMap,
+  getFilteredUsers
 } from './utils'
 
 // Actions
 const LOAD_USERS = 'app/sortable-table/LOAD_USERS'
+const CHANGE_FILTER = 'app/sortable-table/CHANGE_FILTER'
 
 // State
 const defaultState = {
@@ -38,9 +43,16 @@ const defaultState = {
   usersCountByFiltersAssocMap: {},
   //filters
   activeFiltersKeys: {},
+  activeFiltersOrderedList: [],
+  filtersTypesKeysAssocMap: {
+    gender: '_sortGender',
+    department: '_sortDepartment',
+    city: '_sortCity'
+  },
   filtersOptionsKeysGender: [],
   filtersOptionsKeysDepartment: [],
   filtersOptionsKeysCity: [],
+  filtersValuesTypesAssocMap: {},
   filtersOptionsForViewGender: [],
   filtersOptionsForViewDepartment: [],
   filtersOptionsForViewCity: [],
@@ -48,20 +60,21 @@ const defaultState = {
 
 // Reducer
 export default function reducer(state = defaultState, action = {}) {
-  console.log("Reducer")
-  console.log(action)
+  //console.log("Reducer")
+  //console.log(action)
 
   const {type, payload} = action
   
-  switch (type) {
-    case LOAD_USERS + START:
+  switch (type) {    
+    case LOAD_USERS + START: {
       return {
         ...state,
         usersLoading: true,
         usersLoaded: false      
       }
-    case LOAD_USERS + SUCCESS:
-      const {activeFiltersKeys} = state 
+    }      
+    case LOAD_USERS + SUCCESS: {
+      const {activeFiltersKeys, filtersTypesKeysAssocMap} = state 
       const {users} = payload
       const {
         genderKeys, departmentKeys, cityKeys
@@ -78,33 +91,112 @@ export default function reducer(state = defaultState, action = {}) {
         usersCountByFiltersAssocMap,
         activeFiltersKeys
       )
-
-      //console.log('Test 1 ---')
-      //console.log(filtersOptionForView)
-  
+    
       return {
         ...state,
         usersLoading: false,
         usersLoaded: true,
-        defaultUsers: getDefaultUsers(users),
-        users: getDefaultUsers(users),
+        defaultUsers: getDefaultUsers(users, filtersTypesKeysAssocMap),
+        users: getDefaultUsers(users, filtersTypesKeysAssocMap),
         usersCountByFiltersAssocMap,
         filtersOptionsKeysGender: [].concat(genderKeys),
         filtersOptionsKeysDepartment: [].concat(departmentKeys),
         filtersOptionsKeysCity: [].concat(cityKeys),
+        filtersValuesTypesAssocMap: getFiltersValuesTypesAssocMap(genderKeys, departmentKeys, cityKeys),
         filtersOptionsForViewGender: [].concat(genderOptions),
         filtersOptionsForViewDepartment: [].concat(departmentOptions),
         filtersOptionsForViewCity: [].concat(cityOptions)
       }
-    case LOAD_USERS + FAIL:
+    }    
+    case LOAD_USERS + FAIL: {
       return state
-    default: return state
+    }      
+    case CHANGE_FILTER: {
+      
+      const {filter, filterType} = payload
+      const {
+        activeFiltersKeys,        
+        filtersOptionsKeysGender,
+        filtersOptionsKeysDepartment,
+        filtersOptionsKeysCity,
+        filtersValuesTypesAssocMap,
+        filtersTypesKeysAssocMap,
+        activeFiltersOrderedList,     
+        defaultUsers
+      } = state
+    
+      const newActiveFiltersKeys = getNewActiveFiltersKeys(activeFiltersKeys, filter)    
+      let newActiveFiltersOrderedList = getArrayWithoutStringIfExists(activeFiltersOrderedList, filter)
+
+      if(newActiveFiltersOrderedList.length === activeFiltersOrderedList.length) {
+        newActiveFiltersOrderedList = [
+          ...getArrayWithoutStringIfExists(activeFiltersOrderedList, filter),
+          filter
+        ] 
+      }   
+      
+      let filteredUsers = defaultUsers
+
+      if(newActiveFiltersOrderedList.length) {
+        filteredUsers = getFilteredUsers(
+          defaultUsers, newActiveFiltersOrderedList,
+          filtersValuesTypesAssocMap, filtersTypesKeysAssocMap
+        )
+      }
+
+      console.log('filteredUsers')
+      console.log(filteredUsers)
+
+      const {
+        genderKeys, departmentKeys, cityKeys
+      } = getFiltersOptionsKeysFromUsersData(filteredUsers)
+
+      const usersCountByFiltersAssocMap = getUsersCountByFiltersValues(
+        genderKeys.concat(departmentKeys, cityKeys), filteredUsers
+      )  
+    
+      const {genderOptions, departmentOptions, cityOptions} = getFiltersOptionsForView(
+        {
+          genderValues: filtersOptionsKeysGender,
+          departmentValues: filtersOptionsKeysDepartment,
+          cityValues: filtersOptionsKeysCity
+        },
+        usersCountByFiltersAssocMap,
+        newActiveFiltersKeys
+      )
+
+      console.log('Debug filters ---')  
+      console.log(newActiveFiltersOrderedList)
+      console.log(filterType)
+      console.log(filter)
+      console.log(newActiveFiltersKeys) 
+      console.log(newActiveFiltersOrderedList)
+
+      return {
+        ...state,
+        activeFiltersKeys: newActiveFiltersKeys,
+        activeFiltersOrderedList: newActiveFiltersOrderedList,
+        filtersOptionsForViewGender: [].concat(genderOptions),
+        filtersOptionsForViewDepartment: [].concat(departmentOptions),
+        filtersOptionsForViewCity: [].concat(cityOptions),
+        usersCountByFiltersAssocMap,
+        users: filteredUsers
+      }
+    }      
+    default: { return state }
   }
 }
 
 // Action Creators
 export function loadUsers() {
   return { type: LOAD_USERS + START }
+}
+
+export function changeFilter(filterType, filter) {
+  return { 
+    type: CHANGE_FILTER,
+    payload: {filterType, filter} 
+  }
 }
 
 // side effects, only as applicable

@@ -3,7 +3,7 @@ import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
 import { connect } from "react-redux";
-import { loadUsers } from "../../ducks/sortableTable/index";
+import { loadUsers, changeFilter } from "../../ducks/sortableTable/index";
 
 class SortableTable extends React.Component {
     constructor(props) {
@@ -13,8 +13,8 @@ class SortableTable extends React.Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount")
-        console.log(this.props)
+        //console.log("componentDidMount")
+        //console.log(this.props)
         const {usersLoading, usersLoaded, loadUsers} = this.props
         if(!usersLoading && !usersLoaded) {
             loadUsers()
@@ -22,16 +22,13 @@ class SortableTable extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("componentDidUpdate, ===")
+        //console.log("componentDidUpdate, ===")
     }
 
     handleFilterChange(event) {
-        console.log("handleFilterChange()", '---')
         const target = event.target;
-        const {value, name} = target
-
-        console.log(name)
-        console.log(value)
+        const {name, value} = target
+        this.props.changeFilter(name, value)
     }
 
     handleSortChange(sortType) {
@@ -92,6 +89,6 @@ const mapStateToProps = (state /*, ownProps*/) => {
 
 export default connect(
     mapStateToProps,
-    {loadUsers},
+    {loadUsers, changeFilter},
 )(SortableTable);
 

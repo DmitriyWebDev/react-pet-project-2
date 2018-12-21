@@ -171,3 +171,7 @@ export const getFilteredUsers = (users, filters, filterValTypeAssocMap, filterTy
     return result
 }
 
+export const getSortedUsers = (users, sortDirection, sortParam) => {
+    return _.orderBy(users, [sortParam], [sortDirection]);
+}
+

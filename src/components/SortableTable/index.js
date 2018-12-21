@@ -3,7 +3,7 @@ import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
 import { connect } from "react-redux";
-import { loadUsers, changeFilter } from "../../ducks/sortableTable/index";
+import { loadUsers, changeFilter, changeSorting } from "../../ducks/sortableTable/index";
 
 class SortableTable extends React.Component {
     constructor(props) {
@@ -31,9 +31,8 @@ class SortableTable extends React.Component {
         this.props.changeFilter(name, value)
     }
 
-    handleSortChange(sortType) {
-        console.log("handleSortChange()", '---')
-        console.log(sortType)    
+    handleSortChange(sortingType) {     
+        this.props.changeSorting(sortingType)    
     }
 
     render() {
@@ -42,7 +41,9 @@ class SortableTable extends React.Component {
             users,
             filtersOptionsForViewGender,
             filtersOptionsForViewDepartment,
-            filtersOptionsForViewCity
+            filtersOptionsForViewCity,
+            sortDirection,
+            sortParamActive
         } = this.props
 
         return (
@@ -59,7 +60,11 @@ class SortableTable extends React.Component {
                     </div>
 
                     <div className="table__rows">
-                        <RowsTitles handleSortChange={this.handleSortChange}/>
+                        <RowsTitles
+                            handleSortChange={this.handleSortChange}
+                            sortDirection={sortDirection}
+                            sortParamActive={sortParamActive}
+                        />
                         <RowsList users={users} />
                     </div>
 
@@ -75,6 +80,8 @@ const mapStateToProps = (state /*, ownProps*/) => {
         filtersOptionsForViewGender,
         filtersOptionsForViewDepartment,
         filtersOptionsForViewCity,
+        sortDirection,
+        sortParamActive,
     } = state.sortableTable
     return {
         usersLoading,
@@ -83,12 +90,14 @@ const mapStateToProps = (state /*, ownProps*/) => {
         filtersOptionsForViewGender,
         filtersOptionsForViewDepartment,
         filtersOptionsForViewCity,
+        sortDirection,
+        sortParamActive,
     };
 };
 
 
 export default connect(
     mapStateToProps,
-    {loadUsers, changeFilter},
+    {loadUsers, changeFilter, changeSorting},
 )(SortableTable);
 

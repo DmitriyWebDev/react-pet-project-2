@@ -9,12 +9,14 @@ import {
   getNewActiveFiltersKeys,
   getArrayWithoutStringIfExists,
   getFiltersValuesTypesAssocMap,
-  getFilteredUsers
+  getFilteredUsers,
+  getSortedUsers
 } from './utils'
 
 // Actions
 const LOAD_USERS = 'app/sortable-table/LOAD_USERS'
 const CHANGE_FILTER = 'app/sortable-table/CHANGE_FILTER'
+const CHANGE_SORT = 'app/sortable-table/CHANGE_SORT'
 
 // State
 const defaultState = {
@@ -41,7 +43,7 @@ const defaultState = {
   ],
   users: [],
   usersCountByFiltersAssocMap: {},
-  //filters
+  // filters
   activeFiltersKeys: {},
   activeFiltersOrderedList: [],
   filtersTypesKeysAssocMap: {
@@ -56,6 +58,16 @@ const defaultState = {
   filtersOptionsForViewGender: [],
   filtersOptionsForViewDepartment: [],
   filtersOptionsForViewCity: [],
+  // sorting
+  sortDirection: 'asc',
+  sortParamActive: null,
+  sortValuesKeysAssocMap: {
+    name: 'name',
+    age: 'age',
+    gender: 'gender',
+    department: 'department',
+    address: '_addressFull'
+  }
 }
 
 // Reducer
@@ -122,7 +134,11 @@ export default function reducer(state = defaultState, action = {}) {
         filtersValuesTypesAssocMap,
         filtersTypesKeysAssocMap,
         activeFiltersOrderedList,     
-        defaultUsers
+        defaultUsers,
+        // sorting
+        sortDirection,
+        sortParamActive,
+        sortValuesKeysAssocMap
       } = state
     
       const newActiveFiltersKeys = getNewActiveFiltersKeys(activeFiltersKeys, filter)    
@@ -143,9 +159,13 @@ export default function reducer(state = defaultState, action = {}) {
           filtersValuesTypesAssocMap, filtersTypesKeysAssocMap
         )
       }
+    
+      let filteredSortedUsers = filteredUsers
 
-      console.log('filteredUsers')
-      console.log(filteredUsers)
+      if(sortParamActive !== null) {
+        const sortParam = sortValuesKeysAssocMap[`${sortParamActive}`]        
+        filteredSortedUsers = getSortedUsers(filteredSortedUsers, sortDirection, sortParam)
+      }
 
       const {
         genderKeys, departmentKeys, cityKeys
@@ -164,14 +184,7 @@ export default function reducer(state = defaultState, action = {}) {
         usersCountByFiltersAssocMap,
         newActiveFiltersKeys
       )
-
-      console.log('Debug filters ---')  
-      console.log(newActiveFiltersOrderedList)
-      console.log(filterType)
-      console.log(filter)
-      console.log(newActiveFiltersKeys) 
-      console.log(newActiveFiltersOrderedList)
-
+    
       return {
         ...state,
         activeFiltersKeys: newActiveFiltersKeys,
@@ -180,9 +193,29 @@ export default function reducer(state = defaultState, action = {}) {
         filtersOptionsForViewDepartment: [].concat(departmentOptions),
         filtersOptionsForViewCity: [].concat(cityOptions),
         usersCountByFiltersAssocMap,
-        users: filteredUsers
+        users: filteredSortedUsers
       }
-    }      
+    }    
+    case CHANGE_SORT: {
+      const {sortingType} = payload
+      const {users, sortDirection, sortParamActive, sortValuesKeysAssocMap} = state
+      
+      let newSortDirection = sortDirection
+      
+      if(sortParamActive !== null && sortingType === sortParamActive) {
+        newSortDirection = (sortDirection === 'asc') ? 'desc' : 'asc'
+      } 
+
+      const sortParam = sortValuesKeysAssocMap[`${sortingType}`]     
+      const sortedUsers = getSortedUsers(users, newSortDirection, sortParam)
+
+      return {
+        ...state,
+        users: sortedUsers,
+        sortDirection: newSortDirection,
+        sortParamActive: sortingType,        
+      }
+    }   
     default: { return state }
   }
 }
@@ -196,6 +229,13 @@ export function changeFilter(filterType, filter) {
   return { 
     type: CHANGE_FILTER,
     payload: {filterType, filter} 
+  }
+}
+
+export function changeSorting(sortingType) {
+  return { 
+    type: CHANGE_SORT,
+    payload: {sortingType} 
   }
 }
 

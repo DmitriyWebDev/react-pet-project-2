@@ -125,7 +125,7 @@ export default function reducer(state = defaultState, action = {}) {
     }      
     case CHANGE_FILTER: {
       
-      const {filter, filterType} = payload
+      const {filter} = payload
       const {
         activeFiltersKeys,        
         filtersOptionsKeysGender,

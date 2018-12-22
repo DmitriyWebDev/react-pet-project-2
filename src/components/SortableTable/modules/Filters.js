@@ -15,7 +15,9 @@ const Filters = (props) => {
                     Gender
                 </div>
                 <div className="filters-list__item-options">
-                    {genderFilters}
+                    <div className="filters-list__item-options-content">
+                        {genderFilters}
+                    </div>                   
                 </div>
             </div>
 
@@ -24,7 +26,10 @@ const Filters = (props) => {
                     Department
                 </div>
                 <div className="filters-list__item-options">
-                    {departmentFilters}
+                    <div className="filters-list__item-options-content">
+                        {departmentFilters}
+                    </div> 
+                   
                 </div>
             </div>
 
@@ -33,7 +38,9 @@ const Filters = (props) => {
                     City
                 </div>
                 <div className="filters-list__item-options">
-                    {cityFilters}
+                    <div className="filters-list__item-options-content">
+                        {cityFilters}
+                    </div>                     
                 </div>
             </div>
 
@@ -48,17 +55,19 @@ const Filters = (props) => {
             const { label, count, checked } = item
     
             return <label key={label} className="filters-list__item-option">
-                        <div className="filters-list__item-option-name">
-                            {label} ({count})
-                        </div>
-                        <input
-                            className="filters-list__item-option-input"
-                            name={optionsName}
-                            type="checkbox"
-                            checked={checked}
-                            onChange={props.handleFilterChange}
-                            value={label}
-                        />
+                        <div className="filters-list__item-option-content">                            
+                            <input
+                                className="filters-list__item-option-input"
+                                name={optionsName}
+                                type="checkbox"
+                                checked={checked}
+                                onChange={props.handleFilterChange}
+                                value={label}
+                            />
+                            <div className="filters-list__item-option-name">
+                                {label} ({count})
+                            </div>
+                        </div>                        
                     </label>
         })
     }  

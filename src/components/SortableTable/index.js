@@ -2,8 +2,8 @@ import React from 'react'
 import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
-import { connect } from "react-redux";
-import { loadUsers, changeFilter, changeSorting } from "../../ducks/sortableTable/index";
+import { connect } from "react-redux"
+import { loadUsers, changeFilter, changeSorting } from "../../ducks/sortableTable/index"
 
 class SortableTable extends React.Component {
     constructor(props) {

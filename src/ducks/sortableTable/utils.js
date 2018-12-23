@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
-export const getDefaultUsers = (users, filtersTypesKeysAssocMap) => {
+export const getDefaultUsers = (users, filtersTypesKeysAssocMap, RecordModel) => {
     const {gender, department, city} = filtersTypesKeysAssocMap
     return users.map((user, index, array) => {
-        return {
+        return RecordModel({
             ...user,
             // custom data fields
             _addressFull: `${user.address.city}, ${user.address.street}`,
@@ -11,7 +11,7 @@ export const getDefaultUsers = (users, filtersTypesKeysAssocMap) => {
             [gender]: user.gender,
             [department]: user.department,
             [city]: user.address.city
-        }
+        })
     })
 }
 

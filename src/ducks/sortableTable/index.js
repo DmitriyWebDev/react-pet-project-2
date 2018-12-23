@@ -1,3 +1,4 @@
+import { Record } from 'immutable'
 import {
   START, SUCCESS, FAIL
 } from '../../constants-common'
@@ -15,28 +16,26 @@ const CHANGE_FILTER = 'app/sortable-table/CHANGE_FILTER'
 const CHANGE_SORT = 'app/sortable-table/CHANGE_SORT'
 
 // State
-const defaultState = {
+const UserRecord = Record({
+  id: -1,
+  name: "",
+  age: 0,
+  gender: "",
+  department: "",
+  address: {
+    city: "",
+    street: ""
+  }, 
+  _addressFull: "",  
+  _sortGender: "",
+  _sortDepartment: "",
+  _sortCity: ""
+})
+
+const ReducerRecord = Record({
   usersLoading: false,
   usersLoaded: false,
-  defaultUsers : [
-    // {
-    //   id: "573f358cbd70b5b843a2d624",
-    //   name: "Mendez",
-    //   age: 30,
-    //   gender: "male",
-    //   department: "Backend",
-    //   address: {
-    //     city: "Moscow",
-    //     street: "Fayette Street 923"
-    //   },
-    //   // custom data fields
-    //   _addressFull: "Moscow, Fayette Street 923",
-    //   // custom sort fields
-    //   _sortGender: "male",
-    //   _sortDepartment: "Backend",
-    //   _sortCity: "Moscow"
-    // },
-  ], 
+  defaultUsers: [],
   // filters
   activeFiltersKeys: {},
   activeFiltersOrderedList: [],
@@ -48,7 +47,7 @@ const defaultState = {
   filtersOptionsKeysGender: [],
   filtersOptionsKeysDepartment: [],
   filtersOptionsKeysCity: [],
-  filtersValuesTypesAssocMap: {}, 
+  filtersValuesTypesAssocMap: {},
   // sorting
   sortDirection: 'asc',
   sortParamActive: null,
@@ -59,83 +58,75 @@ const defaultState = {
     department: 'department',
     address: '_addressFull'
   }
-}
+})
+
+const defaultState = new ReducerRecord()
 
 // Reducer
 export default function reducer(state = defaultState, action = {}) {
-  //console.log("Reducer")
-  //console.log(action)
 
-  const {type, payload} = action
-  
-  switch (type) {    
+  const { type, payload } = action
+
+  switch (type) {
     case LOAD_USERS + START: {
-      return {
-        ...state,
-        usersLoading: true,
-        usersLoaded: false      
-      }
-    }      
+      return state
+        .set('usersLoading', true)
+        .set('usersLoaded', false)
+    }
     case LOAD_USERS + SUCCESS: {
-      const {filtersTypesKeysAssocMap} = state 
-      const {users} = payload
+      const { filtersTypesKeysAssocMap } = state
+      const { users } = payload
       const {
         genderKeys, departmentKeys, cityKeys
-      } = getFiltersOptionsKeysFromUsersData(users)         
+      } = getFiltersOptionsKeysFromUsersData(users)
 
-      return {
-        ...state,
-        usersLoading: false,
-        usersLoaded: true,
-        defaultUsers: getDefaultUsers(users, filtersTypesKeysAssocMap),           
-        filtersOptionsKeysGender: [].concat(genderKeys),
-        filtersOptionsKeysDepartment: [].concat(departmentKeys),
-        filtersOptionsKeysCity: [].concat(cityKeys),
-        filtersValuesTypesAssocMap: getFiltersValuesTypesAssocMap(genderKeys, departmentKeys, cityKeys)       
-      }
-    }    
+      return state
+        .set('usersLoading', false)
+        .set('usersLoaded', true)
+        .set('defaultUsers', getDefaultUsers(users, filtersTypesKeysAssocMap, UserRecord))
+        .set('filtersOptionsKeysGender', [].concat(genderKeys))
+        .set('filtersOptionsKeysDepartment', [].concat(departmentKeys))
+        .set('filtersOptionsKeysCity', [].concat(cityKeys))
+        .set('filtersValuesTypesAssocMap', getFiltersValuesTypesAssocMap(genderKeys, departmentKeys, cityKeys))     
+    }
     case LOAD_USERS + FAIL: {
       return state
-    }      
+    }
     case CHANGE_FILTER: {
-      
-      const {filter} = payload
+
+      const { filter } = payload
       const {
         activeFiltersKeys,
-        activeFiltersOrderedList    
+        activeFiltersOrderedList
       } = state
-    
-      const newActiveFiltersKeys = getNewActiveFiltersKeys(activeFiltersKeys, filter)    
+
+      const newActiveFiltersKeys = getNewActiveFiltersKeys(activeFiltersKeys, filter)
       let newActiveFiltersOrderedList = getArrayWithoutStringIfExists(activeFiltersOrderedList, filter)
 
-      if(newActiveFiltersOrderedList.length === activeFiltersOrderedList.length) {
+      if (newActiveFiltersOrderedList.length === activeFiltersOrderedList.length) {
         newActiveFiltersOrderedList = [
           ...getArrayWithoutStringIfExists(activeFiltersOrderedList, filter),
           filter
-        ] 
-      }   
-         
-      return {
-        ...state,
-        activeFiltersKeys: newActiveFiltersKeys,
-        activeFiltersOrderedList: newActiveFiltersOrderedList        
+        ]
       }
-    }    
+
+      return state
+        .set('activeFiltersKeys', newActiveFiltersKeys)
+        .set('activeFiltersOrderedList', newActiveFiltersOrderedList)
+    }
     case CHANGE_SORT: {
-      const {sortingType} = payload
-      const {sortDirection, sortParamActive} = state
-      
+      const { sortingType } = payload
+      const { sortDirection, sortParamActive } = state
+
       let newSortDirection = sortDirection
-      
-      if(sortParamActive !== null && sortingType === sortParamActive) {
+
+      if (sortParamActive !== null && sortingType === sortParamActive) {
         newSortDirection = (sortDirection === 'asc') ? 'desc' : 'asc'
-      } 
-      
-      return {
-        ...state,     
-        sortDirection: newSortDirection,
-        sortParamActive: sortingType,        
       }
+
+      return state
+        .set('sortDirection', newSortDirection)
+        .set('sortParamActive', sortingType)
     }
     default: { return state }
   }
@@ -147,36 +138,36 @@ export function loadUsers() {
 }
 
 export function changeFilter(filterType, filter) {
-  return { 
+  return {
     type: CHANGE_FILTER,
-    payload: {filterType, filter} 
+    payload: { filterType, filter }
   }
 }
 
 export function changeSorting(sortingType) {
-  return { 
+  return {
     type: CHANGE_SORT,
-    payload: {sortingType} 
+    payload: { sortingType }
   }
 }
 
 // side effects, only as applicable
 // e.g. thunks, epics, etc
 export const requestUsers = store => next => action => {
-  const {type, ...rest} = action
-  
-  if(type !== LOAD_USERS + START) return next(action)
+  const { type, ...rest } = action
+
+  if (type !== LOAD_USERS + START) return next(action)
 
   const urlGetUsers = 'https://gist.githubusercontent.com/bunopus/f48fbb06578003fb521c7c1a54fd906a/raw/e5767c1e7f172c6375f064a9441f2edd57a79f15/test_users.json'
-  
+
   fetch(urlGetUsers)
-      .then(function (response) {
-          return response.json()
-      })
-      .then(function (users) {    
-          next({...rest, type: LOAD_USERS + SUCCESS, payload: {users} })
-      })
-      .catch(function (error) {
-              next({...rest, type: LOAD_USERS + FAIL, error})
-      })
+    .then(function (response) {
+      return response.json()
+    })
+    .then(function (users) {
+      next({ ...rest, type: LOAD_USERS + SUCCESS, payload: { users } })
+    })
+    .catch(function (error) {
+      next({ ...rest, type: LOAD_USERS + FAIL, error })
+    })
 }

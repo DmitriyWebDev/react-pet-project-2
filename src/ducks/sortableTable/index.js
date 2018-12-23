@@ -133,10 +133,6 @@ export default function reducer(state = defaultState, action = {}) {
 }
 
 // Action Creators
-export function loadUsers() {
-  return { type: LOAD_USERS + START }
-}
-
 export function changeFilter(filterType, filter) {
   return {
     type: CHANGE_FILTER,
@@ -153,21 +149,24 @@ export function changeSorting(sortingType) {
 
 // side effects, only as applicable
 // e.g. thunks, epics, etc
-export const requestUsers = store => next => action => {
-  const { type, ...rest } = action
+export function loadUsers() {  
+  return function(dispatch) {
+    dispatch({ type: LOAD_USERS + START })
 
-  if (type !== LOAD_USERS + START) return next(action)
-
-  const urlGetUsers = 'https://gist.githubusercontent.com/bunopus/f48fbb06578003fb521c7c1a54fd906a/raw/e5767c1e7f172c6375f064a9441f2edd57a79f15/test_users.json'
-
-  fetch(urlGetUsers)
-    .then(function (response) {
-      return response.json()
-    })
-    .then(function (users) {
-      next({ ...rest, type: LOAD_USERS + SUCCESS, payload: { users } })
-    })
-    .catch(function (error) {
-      next({ ...rest, type: LOAD_USERS + FAIL, error })
-    })
+    const urlGetUsers = 'https://gist.githubusercontent.com/bunopus/f48fbb06578003fb521c7c1a54fd906a/raw/e5767c1e7f172c6375f064a9441f2edd57a79f15/test_users.json'
+    
+    setTimeout(() => { // timeout 1 second for Loader show demonstration
+      fetch(urlGetUsers)
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (users) {
+        dispatch({ type: LOAD_USERS + SUCCESS, payload: { users } })
+      })
+      .catch(function (error) {
+        dispatch({ type: LOAD_USERS + FAIL, error })
+      })
+    }, 1000)
+    
+  }
 }

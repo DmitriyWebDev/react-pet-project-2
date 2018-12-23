@@ -1,10 +1,10 @@
 import { createStore, applyMiddleware } from "redux"
-import rootReducer from "../reducer"
-import {requestUsers} from '../../ducks/sortableTable/index'
+import thunk from 'redux-thunk'
+import rootReducer from '../reducer'
 
 const store = createStore(
     rootReducer,
-    applyMiddleware(requestUsers)
+    applyMiddleware(thunk)
 )
 
 window.store = store

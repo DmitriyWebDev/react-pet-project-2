@@ -34,7 +34,19 @@
   }
 }
 
-
+// Loader
+.loader {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  &__text {
+    display: block;
+    font-size: 20px;
+  }
+}
 
 
 // Sortable table

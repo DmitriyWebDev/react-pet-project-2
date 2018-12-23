@@ -2,6 +2,7 @@ import React from 'react'
 import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
+import Loader from '../Loader'
 import { connect } from 'react-redux'
 import { loadUsers, changeFilter, changeSorting } from '../../ducks/sortableTable/index'
 import getModifiedFiltersOptionsAndUsers from '../../ducks/sortableTable/selectors'
@@ -40,12 +41,18 @@ class SortableTable extends React.Component {
         console.log('Render SortableTable ---')
         const {
             users,
+            usersLoaded,
             filtersOptions,    
             sortDirection,
             sortParamActive
         } = this.props
 
+        if (!usersLoaded) {             
+            return (<Loader />)
+        }
+
         return (
+
             <div className="table">
                 <div className="table__content">
 

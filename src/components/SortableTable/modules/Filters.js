@@ -2,10 +2,11 @@ import React from 'react'
 
 const Filters = (props) => {
 
-    const { genderOptions, departmentOptions, cityOptions } = props
-    const genderFilters = getFiltersOtions('gender', genderOptions)
-    const departmentFilters = getFiltersOtions('department', departmentOptions)
-    const cityFilters = getFiltersOtions('city', cityOptions)
+    const { filtersOptions } = props
+    const { gender, department, city } = filtersOptions
+    const genderFilters = getFiltersOtions('gender', gender)
+    const departmentFilters = getFiltersOtions('department', department)
+    const cityFilters = getFiltersOtions('city', city)
         
     return (
         <div className="filters-list">

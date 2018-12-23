@@ -4,13 +4,9 @@ import {
 import {
   getDefaultUsers,
   getFiltersOptionsKeysFromUsersData,
-  getUsersCountByFiltersValues,
-  getFiltersOptionsForView,
   getNewActiveFiltersKeys,
   getArrayWithoutStringIfExists,
-  getFiltersValuesTypesAssocMap,
-  getFilteredUsers,
-  getSortedUsers
+  getFiltersValuesTypesAssocMap
 } from './utils'
 
 // Actions
@@ -40,9 +36,7 @@ const defaultState = {
     //   _sortDepartment: "Backend",
     //   _sortCity: "Moscow"
     // },
-  ],
-  users: [],
-  usersCountByFiltersAssocMap: {},
+  ], 
   // filters
   activeFiltersKeys: {},
   activeFiltersOrderedList: [],
@@ -54,10 +48,7 @@ const defaultState = {
   filtersOptionsKeysGender: [],
   filtersOptionsKeysDepartment: [],
   filtersOptionsKeysCity: [],
-  filtersValuesTypesAssocMap: {},
-  filtersOptionsForViewGender: [],
-  filtersOptionsForViewDepartment: [],
-  filtersOptionsForViewCity: [],
+  filtersValuesTypesAssocMap: {}, 
   // sorting
   sortDirection: 'asc',
   sortParamActive: null,
@@ -86,38 +77,21 @@ export default function reducer(state = defaultState, action = {}) {
       }
     }      
     case LOAD_USERS + SUCCESS: {
-      const {activeFiltersKeys, filtersTypesKeysAssocMap} = state 
+      const {filtersTypesKeysAssocMap} = state 
       const {users} = payload
       const {
         genderKeys, departmentKeys, cityKeys
-      } = getFiltersOptionsKeysFromUsersData(users)
-      const usersCountByFiltersAssocMap = getUsersCountByFiltersValues(
-        genderKeys.concat(departmentKeys, cityKeys), users
-      )  
-      const {genderOptions, departmentOptions, cityOptions} = getFiltersOptionsForView(
-        {
-          genderValues: genderKeys,
-          departmentValues: departmentKeys,
-          cityValues: cityKeys
-        },
-        usersCountByFiltersAssocMap,
-        activeFiltersKeys
-      )
-    
+      } = getFiltersOptionsKeysFromUsersData(users)         
+
       return {
         ...state,
         usersLoading: false,
         usersLoaded: true,
-        defaultUsers: getDefaultUsers(users, filtersTypesKeysAssocMap),
-        users: getDefaultUsers(users, filtersTypesKeysAssocMap),
-        usersCountByFiltersAssocMap,
+        defaultUsers: getDefaultUsers(users, filtersTypesKeysAssocMap),           
         filtersOptionsKeysGender: [].concat(genderKeys),
         filtersOptionsKeysDepartment: [].concat(departmentKeys),
         filtersOptionsKeysCity: [].concat(cityKeys),
-        filtersValuesTypesAssocMap: getFiltersValuesTypesAssocMap(genderKeys, departmentKeys, cityKeys),
-        filtersOptionsForViewGender: [].concat(genderOptions),
-        filtersOptionsForViewDepartment: [].concat(departmentOptions),
-        filtersOptionsForViewCity: [].concat(cityOptions)
+        filtersValuesTypesAssocMap: getFiltersValuesTypesAssocMap(genderKeys, departmentKeys, cityKeys)       
       }
     }    
     case LOAD_USERS + FAIL: {
@@ -127,18 +101,8 @@ export default function reducer(state = defaultState, action = {}) {
       
       const {filter} = payload
       const {
-        activeFiltersKeys,        
-        filtersOptionsKeysGender,
-        filtersOptionsKeysDepartment,
-        filtersOptionsKeysCity,
-        filtersValuesTypesAssocMap,
-        filtersTypesKeysAssocMap,
-        activeFiltersOrderedList,     
-        defaultUsers,
-        // sorting
-        sortDirection,
-        sortParamActive,
-        sortValuesKeysAssocMap
+        activeFiltersKeys,
+        activeFiltersOrderedList    
       } = state
     
       const newActiveFiltersKeys = getNewActiveFiltersKeys(activeFiltersKeys, filter)    
@@ -150,72 +114,29 @@ export default function reducer(state = defaultState, action = {}) {
           filter
         ] 
       }   
-      
-      let filteredUsers = defaultUsers
-
-      if(newActiveFiltersOrderedList.length) {
-        filteredUsers = getFilteredUsers(
-          defaultUsers, newActiveFiltersOrderedList,
-          filtersValuesTypesAssocMap, filtersTypesKeysAssocMap
-        )
-      }
-    
-      let filteredSortedUsers = filteredUsers
-
-      if(sortParamActive !== null) {
-        const sortParam = sortValuesKeysAssocMap[`${sortParamActive}`]        
-        filteredSortedUsers = getSortedUsers(filteredSortedUsers, sortDirection, sortParam)
-      }
-
-      const {
-        genderKeys, departmentKeys, cityKeys
-      } = getFiltersOptionsKeysFromUsersData(filteredUsers)
-
-      const usersCountByFiltersAssocMap = getUsersCountByFiltersValues(
-        genderKeys.concat(departmentKeys, cityKeys), filteredUsers
-      )  
-    
-      const {genderOptions, departmentOptions, cityOptions} = getFiltersOptionsForView(
-        {
-          genderValues: filtersOptionsKeysGender,
-          departmentValues: filtersOptionsKeysDepartment,
-          cityValues: filtersOptionsKeysCity
-        },
-        usersCountByFiltersAssocMap,
-        newActiveFiltersKeys
-      )
-    
+         
       return {
         ...state,
         activeFiltersKeys: newActiveFiltersKeys,
-        activeFiltersOrderedList: newActiveFiltersOrderedList,
-        filtersOptionsForViewGender: [].concat(genderOptions),
-        filtersOptionsForViewDepartment: [].concat(departmentOptions),
-        filtersOptionsForViewCity: [].concat(cityOptions),
-        usersCountByFiltersAssocMap,
-        users: filteredSortedUsers
+        activeFiltersOrderedList: newActiveFiltersOrderedList        
       }
     }    
     case CHANGE_SORT: {
       const {sortingType} = payload
-      const {users, sortDirection, sortParamActive, sortValuesKeysAssocMap} = state
+      const {sortDirection, sortParamActive} = state
       
       let newSortDirection = sortDirection
       
       if(sortParamActive !== null && sortingType === sortParamActive) {
         newSortDirection = (sortDirection === 'asc') ? 'desc' : 'asc'
       } 
-
-      const sortParam = sortValuesKeysAssocMap[`${sortingType}`]     
-      const sortedUsers = getSortedUsers(users, newSortDirection, sortParam)
-
+      
       return {
-        ...state,
-        users: sortedUsers,
+        ...state,     
         sortDirection: newSortDirection,
         sortParamActive: sortingType,        
       }
-    }   
+    }
     default: { return state }
   }
 }

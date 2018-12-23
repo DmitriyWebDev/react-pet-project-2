@@ -2,8 +2,9 @@ import React from 'react'
 import FIlters from './modules/Filters'
 import RowsTitles from './modules/RowsTitles'
 import RowsList from './modules/RowsList'
-import { connect } from "react-redux"
-import { loadUsers, changeFilter, changeSorting } from "../../ducks/sortableTable/index"
+import { connect } from 'react-redux'
+import { loadUsers, changeFilter, changeSorting } from '../../ducks/sortableTable/index'
+import getModifiedFiltersOptionsAndUsers from '../../ducks/sortableTable/selectors'
 
 class SortableTable extends React.Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class SortableTable extends React.Component {
     }
 
     handleFilterChange(event) {
-        const target = event.target;
+        const target = event.target
         const {name, value} = target
         this.props.changeFilter(name, value)
     }
@@ -36,12 +37,10 @@ class SortableTable extends React.Component {
     }
 
     render() {
-
+        console.log('Render SortableTable ---')
         const {
             users,
-            filtersOptionsForViewGender,
-            filtersOptionsForViewDepartment,
-            filtersOptionsForViewCity,
+            filtersOptions,    
             sortDirection,
             sortParamActive
         } = this.props
@@ -53,9 +52,7 @@ class SortableTable extends React.Component {
                     <div className="table__filters">
                         <FIlters
                             handleFilterChange={this.handleFilterChange}
-                            genderOptions={filtersOptionsForViewGender}
-                            departmentOptions={filtersOptionsForViewDepartment}
-                            cityOptions={filtersOptionsForViewCity}
+                            filtersOptions={filtersOptions}
                         />
                     </div>
 
@@ -76,22 +73,23 @@ class SortableTable extends React.Component {
 
 const mapStateToProps = (state /*, ownProps*/) => {
     const {
-        usersLoading, usersLoaded, users,
-        filtersOptionsForViewGender,
-        filtersOptionsForViewDepartment,
-        filtersOptionsForViewCity,
+        usersLoading,
+        usersLoaded,         
         sortDirection,
         sortParamActive,
     } = state.sortableTable
+
+    const memoizedData = getModifiedFiltersOptionsAndUsers(state.sortableTable)
+    const {users, filtersOptions} = memoizedData
+
     return {
         usersLoading,
-        usersLoaded,
-        users,
-        filtersOptionsForViewGender,
-        filtersOptionsForViewDepartment,
-        filtersOptionsForViewCity,
+        usersLoaded,           
         sortDirection,
         sortParamActive,
+        // memoized data
+        users,
+        filtersOptions
     };
 };
 
@@ -99,5 +97,5 @@ const mapStateToProps = (state /*, ownProps*/) => {
 export default connect(
     mapStateToProps,
     {loadUsers, changeFilter, changeSorting},
-)(SortableTable);
+)(SortableTable)
 

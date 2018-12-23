@@ -1,7 +1,9 @@
-import { combineReducers } from 'redux';
-import sortableTable from '../../ducks/sortableTable';
+import { combineReducers } from 'redux'
+import sortableTable from '../../ducks/sortableTable'
+import counter from '../../ducks/counter'
 
 const rootReducer = combineReducers({
-    sortableTable
+    sortableTable,
+    counter
 });
 export default rootReducer;

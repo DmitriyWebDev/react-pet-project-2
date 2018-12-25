@@ -1,17 +1,49 @@
 import React from 'react'
+const classNames = require('classnames');
 
 const RowsTitles = (props) => {
     const {handleSortChange, sortDirection, sortParamActive} = props   
+
+    const nameTitleClass = classNames({
+        'table-rows-titles__item': true,
+        'table-rows-titles__item_active': sortParamActive === 'name',
+        'table-rows-titles__item_asc': sortDirection === 'asc',
+        'table-rows-titles__item_desc': sortDirection !== 'asc',
+    });
+
+    const nameAgeClass = classNames({
+        'table-rows-titles__item': true,
+        'table-rows-titles__item_active': sortParamActive === 'age',
+        'table-rows-titles__item_asc': sortDirection === 'asc',
+        'table-rows-titles__item_desc': sortDirection !== 'asc',
+    });
+
+    const nameGenderClass = classNames({
+        'table-rows-titles__item': true,
+        'table-rows-titles__item_active': sortParamActive === 'gender',
+        'table-rows-titles__item_asc': sortDirection === 'asc',
+        'table-rows-titles__item_desc': sortDirection !== 'asc',
+    });
+
+    const nameDepartmentClass = classNames({
+        'table-rows-titles__item': true,
+        'table-rows-titles__item_active': sortParamActive === 'department',
+        'table-rows-titles__item_asc': sortDirection === 'asc',
+        'table-rows-titles__item_desc': sortDirection !== 'asc',
+    });
+
+    const nameAddressClass = classNames({
+        'table-rows-titles__item': true,
+        'table-rows-titles__item_active': sortParamActive === 'address',
+        'table-rows-titles__item_asc': sortDirection === 'asc',
+        'table-rows-titles__item_desc': sortDirection !== 'asc',
+    });
     
     return (
         <div className="table-rows-titles">
 
             <div             
-                className={
-                    "table-rows-titles__item " 
-                    + (sortParamActive === "name" ? "table-rows-titles__item_active " : "")
-                    + (sortDirection === "asc" ? "table-rows-titles__item_asc " : "table-rows-titles__item_desc")
-                }           
+                className={nameTitleClass}           
                 onClick={()=>handleSortChange('name')}
             >
                 <div className="table-rows-titles__item-value">
@@ -21,11 +53,7 @@ const RowsTitles = (props) => {
             </div>
 
             <div             
-                className={
-                    "table-rows-titles__item " 
-                    + (sortParamActive === "age" ? "table-rows-titles__item_active " : "")
-                    + (sortDirection === "asc" ? "table-rows-titles__item_asc " : "table-rows-titles__item_desc")
-                }          
+                className={nameAgeClass}   
                 onClick={()=>handleSortChange('age')}
             >
                 <div className="table-rows-titles__item-value">
@@ -35,11 +63,7 @@ const RowsTitles = (props) => {
             </div>
 
             <div             
-                className={
-                    "table-rows-titles__item " 
-                    + (sortParamActive === "gender" ? "table-rows-titles__item_active " : "")
-                    + (sortDirection === "asc" ? "table-rows-titles__item_asc " : "table-rows-titles__item_desc")
-                }             
+                className={nameGenderClass}         
                 onClick={()=>handleSortChange('gender')}
             >
                 <div className="table-rows-titles__item-value">
@@ -49,11 +73,7 @@ const RowsTitles = (props) => {
             </div>
 
             <div             
-                className={
-                    "table-rows-titles__item " 
-                    + (sortParamActive === "department" ? "table-rows-titles__item_active " : "")
-                    + (sortDirection === "asc" ? "table-rows-titles__item_asc " : "table-rows-titles__item_desc")
-                }            
+                className={nameDepartmentClass}       
                 onClick={()=>handleSortChange('department')}
             >
                 <div className="table-rows-titles__item-value">
@@ -63,11 +83,7 @@ const RowsTitles = (props) => {
             </div>
 
             <div             
-                className={
-                    "table-rows-titles__item " 
-                    + (sortParamActive === "address" ? "table-rows-titles__item_active " : "")
-                    + (sortDirection === "asc" ? "table-rows-titles__item_asc " : "table-rows-titles__item_desc")
-                }          
+                className={nameAddressClass}     
                 onClick={()=>handleSortChange('address')}
             >
                 <div className="table-rows-titles__item-value">
